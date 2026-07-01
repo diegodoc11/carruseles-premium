@@ -289,6 +289,84 @@ Minimalist, friendly, educational aesthetic.
 
 """
 
+    # ---- PRESET editorial-cream: replica look editorial (crema + naranja + listas numeradas) ----
+    if STYLE_PRESET == "editorial-cream":
+        CREAM = "#F0EDE6"
+        ORANGE = "#E8622A"
+        if slide_type == "portada" and has_asset and entity and is_reference_image(entity):
+            return f"""Instagram carousel slide (1080x1350px, ratio 4:5).
+
+STYLE — clean editorial "power user" poster, warm cream aesthetic (NOT watercolor):
+- Background: warm cream / off-white paper ({CREAM}).
+- A few hand-drawn ORANGE ({ORANGE}) starburst / ink-spark doodles scattered in 2-3 corners (like radiating sun-rays).
+- Top-left: small monospace "01/05". Top-right: small monospace "@soydiegoosorio".
+- Big title in a BOLD condensed sans-serif; labels in a monospace/typewriter font.
+
+PIXAR CHARACTER FROM REFERENCE PHOTO (the provided image):
+- Transform the person into a Pixar-style 3D animated character (Toy Story / Up quality): stylized expressive features, smooth polished textures, soft cinematic light. Keep recognizable features: face shape, hair, beard, GLASSES.
+- Place the character on the RIGHT side, ~40-50% of the width. Show the character from the chest/shoulders up (a clean bust), fully rendered as Pixar 3D. Clean, NO watercolor wash.
+
+CLEAN BACKGROUND (CRITICAL): the ENTIRE background is solid warm cream ({CREAM}). Do NOT leave ANY blurry gray residue, ghosting, smudge, shadow-blob or leftover fragment of the original reference photo anywhere — especially in the LOWER-LEFT and BOTTOM corners. Everything that is not the Pixar character or the text is clean flat cream with only the orange starburst doodles. The character's edges (hair, shoulders, arm) must be crisp against the cream, never fading into a gray gradient.
+
+TEXT (write EXACTLY, SPANISH, correct spelling, do NOT invent words):
+{content}
+- Line 1 = small kicker label above the title (uppercase, dark gray).
+- Line 2 = HUGE headline, near-black, with the word "CLAUDE" in ORANGE ({ORANGE}).
+- Line 3 = subtitle with the "8 · 8 · 8" breakdown, monospace, dark gray.
+
+COMPOSITION: headline on the left/center, Pixar character on the right, orange starbursts around, "01/05" top-left, "@soydiegoosorio" top-right. Safe margins 60px. NO other watermark.
+"""
+        if slide_type == "contenido":
+            return f"""Instagram carousel slide (1080x1350px, ratio 4:5).
+
+STYLE — clean editorial list poster, warm cream aesthetic (NOT watercolor, NOT hand-drawn pencil):
+- Background: warm cream / off-white paper ({CREAM}); a couple of subtle ORANGE ({ORANGE}) starburst doodles in corners.
+- Monospace / typewriter font for labels and descriptions; bold for item names.
+
+The TEXT CONTENT uses field labels (PAGINA, TAG, INTRO) that are INSTRUCTIONS — do NOT draw the words "PAGINA", "TAG", "INTRO". Render them as:
+- PAGINA value: small monospace text in the TOP-LEFT corner. Also put "@soydiegoosorio" small in the TOP-RIGHT.
+- TAG value: inside a BLACK rounded rectangle box at the top-left, preceded by a small ORANGE triangle, white monospace text (e.g. "▲ 1. Skills").
+- INTRO value: 1-2 lines of intro text right below the tag box, dark typewriter font.
+- The 8 numbered lines: a vertical NUMBERED LIST of exactly 8 rows. Each row = a big index number (1-8) on the far left, then a light rounded card ({CREAM} slightly lighter, thin border) containing the BOLD name, and under it the one-line description in smaller gray. Even spacing, edge to edge, clean and scannable.
+
+CRITICAL: render EXACTLY the 8 items given, each once, in order. Do NOT invent extra rows, star counts, badges, logos or English text. All text SPANISH (brand names like Claude, Meta, WhatsApp, Notion, Gmail, Perplexity, Reptinac keep their spelling). Correct spelling, no gibberish.
+
+TEXT CONTENT:
+{content}
+
+COMPOSITION: page number top-left + handle top-right, black tag box + intro at top, 8 numbered rows filling the middle and lower area. Safe margins 55px.
+"""
+        if slide_type == "cierre":
+            if has_asset and entity and is_reference_image(entity):
+                return f"""Instagram carousel slide (1080x1350px, ratio 4:5).
+
+STYLE — warm cream editorial closing, same aesthetic as the set: cream background ({CREAM}), ORANGE ({ORANGE}) starburst doodles, BOLD condensed headline with key words in ORANGE, monospace labels.
+
+This is a friendly CLOSING slide. NEVER write "CTA" or "Call to Action".
+
+PIXAR CHARACTER FROM REFERENCE PHOTO (the provided image):
+- Transform the person into a Pixar-style 3D animated character pointing UP with the index finger, upbeat and confident. Keep recognizable features: face, hair, beard, GLASSES. Place on the RIGHT side, ~45% width, cropped by the bottom.
+
+Profile chip TOP-LEFT: a small circular avatar silhouette, then "@soydiegoosorio" in bold, and the followers line under it in smaller gray.
+
+TEXT (SPANISH, exact, correct spelling, no invented words):
+{content}
+- Line 1 = small uppercase kicker (dark gray).
+- Line 2 = BIG headline (the invitation), near-black, with "ventas" and "IA" highlighted in ORANGE ({ORANGE}).
+- The "@soydiegoosorio" and the followers line render ONLY inside the profile chip (do not repeat elsewhere).
+
+COMPOSITION: profile chip top-left, big headline on the left, Pixar character pointing up on the right, orange starbursts around. Safe margins 60px.
+"""
+            return f"""Instagram carousel slide (1080x1350px, ratio 4:5).
+
+STYLE — warm cream editorial closing: cream background ({CREAM}), ORANGE ({ORANGE}) starbursts, bold condensed headline with key words in ORANGE, monospace labels. NEVER write "CTA".
+
+TEXT (SPANISH, exact):
+{content}
+
+COMPOSITION: centered, big headline, "@soydiegoosorio" prominent at the bottom. Safe margins 60px.
+"""
+
     # ---- PRESET tech-clean: replica look infografia tech (degradado + tarjetas UI) ----
     if STYLE_PRESET == "tech-clean" and slide_type in ("contenido", "cierre"):
         if slide_type == "contenido":
