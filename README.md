@@ -43,8 +43,8 @@ Imagenes como estas (estilo ilustracion a mano):
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/santmun/carruselesdef.git
-cd carruselesdef
+git clone https://github.com/diegodoc11/carruseles-premium.git
+cd carruseles-premium
 ```
 
 ### 2. Instalar dependencias Python
@@ -63,17 +63,23 @@ cp .env.example .env
 
 Edita `.env` y reemplaza `tu-api-key-aqui` con tu API key de [kie.ai](https://kie.ai/).
 
-### 4. (Opcional) Copiar a otro proyecto
+### 4. Instalar el skill en Claude Code
 
-Si quieres usar el skill en otro proyecto de Claude Code:
+Para que `/carousel-gen` aparezca en tu Claude Code, copia la carpeta del skill:
 
 ```bash
-# Desde la raiz de TU proyecto
-mkdir -p .claude/skills/carousel-gen scripts
-cp carruselesdef/.claude/skills/carousel-gen/SKILL.md .claude/skills/carousel-gen/
-cp carruselesdef/scripts/generate-carousel.py scripts/
-cp carruselesdef/.env.example .env.example
+# Global (disponible en todos tus proyectos):
+cp -r .claude/skills/carousel-gen ~/.claude/skills/
+
+# O solo para ESTE proyecto: ya viene en .claude/skills/carousel-gen/
 ```
+
+Abre Claude Code en la carpeta del proyecto y escribe `/carousel-gen`.
+
+### 5. (Opcional) Tu handle de Instagram
+
+El slide de cierre usa la variable `IG_HANDLE` (por defecto `@tu_usuario`).
+Ponle el tuyo al generar, por ejemplo: `IG_HANDLE="@mi_usuario"`.
 
 ---
 
@@ -246,8 +252,8 @@ Si proporcionas URLs:
 
 | Concepto | Valor |
 |----------|-------|
-| Por imagen | ~$0.10 USD |
-| Carrusel de 7 slides | ~$0.70 USD |
+| Por imagen (nano-banana-pro, 2K) | ~$0.12 USD |
+| Carrusel de 7 slides | ~$0.84 USD |
 | Generacion | **EN PARALELO** (todas al mismo tiempo) |
 | Tiempo total (7 slides) | ~2-3 minutos |
 
@@ -277,6 +283,23 @@ El script detecta menciones de estas herramientas para sugerir logos:
 ---
 
 ## Personalizacion
+
+### Variables de entorno (estilos)
+
+Se ponen ANTES del comando (inline); no persisten entre llamadas.
+
+| Variable | Default | Que hace |
+|----------|---------|----------|
+| `IG_HANDLE` | `@tu_usuario` | Handle de Instagram del slide de cierre. **Pon el tuyo.** |
+| `COVER_STYLE` | `pixar` | Portada con foto de referencia: `pixar` (3D) o `comic-noir` (tinta/halftone). |
+| `COVER_LEVELBAR` | (off) | `1` agrega barra de 10 niveles al pie de la portada Pixar. |
+| `CONTENT_STYLE` | `watercolor` | `tech-clean` = infografia tech limpia (degradado + tarjetas de terminal/UI) en vez de acuarela. |
+
+Ejemplo:
+```bash
+IG_HANDLE="@mi_usuario" COVER_STYLE=pixar CONTENT_STYLE=tech-clean PYTHONUNBUFFERED=1 \
+  python scripts/generate-carousel.py "mi-bundle-id" --skip-interactive
+```
 
 ### Cambiar aspect ratio
 

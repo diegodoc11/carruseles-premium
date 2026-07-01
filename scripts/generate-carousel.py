@@ -53,6 +53,19 @@ POLL_INTERVAL = 5  # segundos
 # Default "pixar"; cambiar con la variable de entorno COVER_STYLE (ej: "comic-noir").
 COVER_STYLE = os.environ.get("COVER_STYLE", "pixar").strip().lower()
 
+# Preset de estilo para slides de CONTENIDO y CIERRE.
+# Default "watercolor" (hand-drawn, comportamiento original).
+# "tech-clean": infografia tech limpia (degradado claro + tarjetas de UI/terminal),
+# para replicar carruseles tipo @itsnextwork. Activar con CONTENT_STYLE=tech-clean.
+STYLE_PRESET = os.environ.get("CONTENT_STYLE", "watercolor").strip().lower()
+
+# Si "1", la portada Pixar agrega una barra de 10 niveles (Nv 1..Nv 10) al pie.
+COVER_LEVELBAR = os.environ.get("COVER_LEVELBAR", "").strip() == "1"
+
+# Handle de Instagram que aparece en el slide de cierre.
+# Placeholder por defecto; cada usuario pone el suyo con la variable IG_HANDLE.
+IG_HANDLE = os.environ.get("IG_HANDLE", "@tu_usuario").strip()
+
 
 def get_api_key() -> str:
     """Obtiene la API key de Kie AI."""
@@ -276,6 +289,88 @@ Minimalist, friendly, educational aesthetic.
 
 """
 
+    # ---- PRESET tech-clean: replica look infografia tech (degradado + tarjetas UI) ----
+    if STYLE_PRESET == "tech-clean" and slide_type in ("contenido", "cierre"):
+        if slide_type == "contenido":
+            return f"""Instagram carousel slide (1080x1350px, ratio 4:5).
+
+STYLE — clean modern tech infographic (NOT watercolor, NOT hand-drawn pencil, NOT Pixar):
+- Soft airy vertical gradient background: pale sky-blue (#EAF1F6) at the top fading to warm cream (#F5EFE3) at the bottom.
+- A faint, soft watercolor landscape barely visible in the lower third: a wooden boardwalk path winding through dune grass at golden hour (very low contrast). It must stay subtle and NOT hurt text legibility.
+- Generous whitespace, calm and premium feel.
+
+LANGUAGE: All visible body text in SPANISH. Command tokens and code (e.g. /clear, claude -p, settings.json, CLAUDE.md, Next.js) stay literal exactly as written. Brand names (Claude, MCP, GitHub, Slack, Postgres, Notion, Figma, Stripe) keep their original spelling and capitalization.
+
+FIELD LABELS ARE INSTRUCTIONS — do NOT draw the words COLOR, TAG, TITULO, CUERPO, CHIPS or VISUAL. Render them as:
+- COLOR: the accent color (hex) for this slide's tag pill and the underline.
+- TAG: a small rounded FOLDER-TAB pill in the UPPER-LEFT corner, filled with COLOR, white text (e.g. "Nv 1").
+- TITULO: the big title in an elegant SERIF font, deep navy (#1F2A44), with a short thick underline stroke in COLOR right beneath it.
+- CUERPO: 2-3 lines of body text under the title, clean humanist sans-serif, dark slate (#33415A).
+- CHIPS (if present): small rounded light-gray pills in a row.
+- VISUAL: build the described UI element as a realistic card (dark terminal, dark code editor, app-icon grid, or table) with rounded corners and a soft drop shadow, in the lower half. Render any text inside it EXACTLY as given, monospaced for terminals/editors.
+
+CRITICAL ANTI-HALLUCINATION: The ONLY readable text in the whole image is what TAG, TITULO, CUERPO, CHIPS and the VISUAL's specified lines produce — nothing else. Do NOT invent, add, duplicate or hallucinate any extra words, fake commands, gibberish, brand logos, UI chrome or labels. Every word correctly spelled. NO watermark, NO username, NO @handle on this slide.
+
+TEXT CONTENT:
+{content}
+
+COMPOSITION:
+- Upper-left: TAG folder pill. Top third: TITULO + colored underline, then CUERPO. Lower half: the VISUAL card.
+- Safe margins: 70px all sides.
+"""
+        elif has_asset and entity and is_reference_image(entity):
+            # cierre tech-clean CON foto -> personaje Pixar apuntando + caja CTA + seguidores
+            return f"""Instagram carousel slide (1080x1350px, ratio 4:5).
+
+STYLE — same clean modern tech aesthetic as the rest of the carousel: soft vertical gradient pale sky-blue (#EAF1F6) to warm cream (#F5EFE3), with a faint subtle watercolor boardwalk-path-at-sunset landscape in the lower third. Calm, premium, lots of whitespace.
+
+PIXAR CHARACTER FROM REFERENCE PHOTO (the provided image):
+- Transform the person in the reference photo into a Pixar-style 3D animated character (Toy Story / Up quality): stylized expressive features, slightly larger eyes, smooth polished textures, soft cinematic key + rim light.
+- Keep the recognizable features of the real person: face shape, hairstyle, beard, GLASSES.
+- POSE: the character points UPWARD with the index finger (toward the title), upbeat and confident, exactly like the reference pose.
+- Place the character on the RIGHT side, occupying ~45-55% of the slide, feet/torso cropped by the bottom edge. Clean, NOT watercolor wash.
+
+This is a friendly CLOSING slide. NEVER write the words "CTA" or "Call to Action".
+
+FIELD LABELS ARE INSTRUCTIONS — do NOT draw the words TITULO, COMENTA, CUERPO, HANDLE or SEGUIDORES. Render them as:
+- TITULO: bold question, deep navy (#1F2A44), elegant serif, upper-LEFT area (left of the character).
+- The literal word "Comenta" then, right below it, the COMENTA keyword inside a BOLD highlighted ROUNDED BOX (golden/amber #F4C20D fill, dark navy bold uppercase text, subtle outline) — like a sticker that pops. This is the visual focal point.
+- CUERPO: one short inviting line below the box, dark slate (#33415A).
+- HANDLE + SEGUIDORES: a small clean profile chip near the TOP-LEFT: a small circular avatar silhouette, then "{IG_HANDLE}" in bold navy and the SEGUIDORES line in smaller gray right under it.
+
+LANGUAGE: all text SPANISH (brand "Claude Code" keeps spelling). Spell everything correctly, NO invented/duplicated words, NO fake UI, NO watermark beyond the specified handle.
+
+TEXT CONTENT:
+{content}
+
+COMPOSITION:
+- Top-left: profile chip ({IG_HANDLE} + seguidores). Left column: TITULO, then "Comenta" + golden keyword box, then CUERPO. Right: Pixar character pointing up.
+- Safe margins: 60px all sides.
+"""
+        else:  # cierre tech-clean sin foto
+            return f"""Instagram carousel slide (1080x1350px, ratio 4:5).
+
+STYLE — same clean modern tech aesthetic as the rest of the carousel: soft vertical gradient pale sky-blue (#EAF1F6) to warm cream (#F5EFE3), with a faint subtle watercolor boardwalk-path-at-sunset landscape in the lower third. Calm, premium, lots of whitespace. NOT watercolor-heavy, NOT hand-drawn pencil.
+
+This is a friendly CLOSING slide. NEVER write the words "CTA" or "Call to Action".
+
+FIELD LABELS ARE INSTRUCTIONS — do NOT draw the words TITULO, CUERPO or HANDLE. Render them as:
+- TITULO: large bold title (a question), deep navy (#1F2A44), elegant serif, centered upper area.
+- CUERPO: one inviting line below, dark slate (#33415A); the quoted word "AUTOMATIZAR" highlighted inside a soft accent pill.
+- HANDLE: render "{IG_HANDLE}" prominently near the bottom inside a small dark rounded pill, white text.
+
+Optionally one simple elegant flat icon (small rocket, forward arrow or chat bubble) — wordless, no invented text.
+
+LANGUAGE: all visible text in SPANISH (brand "Claude Code" keeps its spelling). Everything spelled correctly, no invented or duplicated words.
+
+TEXT CONTENT:
+{content}
+
+COMPOSITION:
+- Centered, inviting. TITULO top-center, CUERPO middle, {IG_HANDLE} bottom in a dark pill.
+- Safe margins: 70px all sides.
+"""
+
     if slide_type == "portada":
         if has_asset and entity and is_reference_image(entity):
             if COVER_STYLE == "comic-noir":
@@ -367,9 +462,10 @@ TEXT LANGUAGE & CAPITALIZATION: All visible text must be in SPANISH only. Preser
 
 TEXT CONTENT (el modelo debe escribir este texto en la imagen handwritten bold navy, grande y legible, EXACTAMENTE como esta escrito):
 {content}
-
+{('''
+BARRA DE NIVELES (importante): en el TERCIO INFERIOR del slide, dibuja una fila horizontal de 10 pequenas pestanas tipo carpeta, en gradiente de color de izquierda a derecha: azul claro, azul, verde claro, verde, lima, amarillo, naranja, naranja oscuro, rojo y negro. Cada pestana lleva su numero "Nv 1" ... "Nv 10" y debajo, en texto pequeno legible, su etiqueta en este orden EXACTO: Terminal, Memory, Commands, Custom, Skills, MCP, Subagents, Hooks, Headless, Routines. Texto correctamente escrito, sin inventar palabras.''' if COVER_LEVELBAR else '')}
 COMPOSITION:
-- Personaje 3D dominante
+- Personaje 3D dominante en la parte superior/central
 - Texto handwritten bold navy a un lado del personaje, jerarquía clara
 - NO watermark, NO username, NO branding text en la portada
 - Safe margins: 60px all sides
@@ -576,12 +672,12 @@ LAYOUT:
 
 TEXT STYLING:
 - Texto principal: Large bold handwritten, black, 48-56pt
-- "@soydiegoosorio": Visible y destacado, handwritten, 36pt
+- "{IG_HANDLE}": Visible y destacado, handwritten, 36pt
 
 COMPOSITION:
 - Ilustración cálida arriba
 - Texto invitante al centro (en caja hand-drawn)
-- @soydiegoosorio destacado
+- {IG_HANDLE} destacado
 - Friendly, welcoming feel
 - Margins: 60px all sides
 """
@@ -608,12 +704,12 @@ INTEGRACIÓN:
 
 TEXT STYLING:
 - Texto principal: Large bold handwritten, black, 48-56pt
-- "@soydiegoosorio": Visible y destacado, handwritten, 36pt
+- "{IG_HANDLE}": Visible y destacado, handwritten, 36pt
 
 COMPOSITION:
 - Ilustración cálida arriba
 - Texto invitante al centro (en caja hand-drawn)
-- @soydiegoosorio destacado
+- {IG_HANDLE} destacado
 - Friendly, welcoming feel
 - Margins: 60px all sides
 """
@@ -642,12 +738,12 @@ IMPORTANTE: Escribe el texto TAL COMO ESTÁ arriba. No agregues "CTA", "Call to 
 
 TEXT STYLING:
 - Texto principal: Medium-large handwritten, navy blue, 48pt
-- "@soydiegoosorio": Destacado, bold handwritten, 36pt
+- "{IG_HANDLE}": Destacado, bold handwritten, 36pt
 
 COMPOSITION:
 - Ilustración top
 - Texto invitante al centro (en caja hand-drawn)
-- @soydiegoosorio prominente
+- {IG_HANDLE} prominente
 - Friendly, inviting feel
 - Margins: 60px all sides
 """
@@ -767,12 +863,12 @@ DECORATIVE ELEMENTS:
 - Hand-drawn box around CTA (dashed or solid, imperfect)
 - Small arrows pointing to CTA
 - Corner flourishes or stars
-- "@soydiegoosorio" prominente y destacado, handwritten 36pt
+- "{IG_HANDLE}" prominente y destacado, handwritten 36pt
 
 COMPOSITION:
 - Top 25%: Illustration
 - Middle 50%: CTA text
-- Bottom 25%: @soydiegoosorio
+- Bottom 25%: {IG_HANDLE}
 - Centered, inviting layout
 - Warm, friendly energy
 - Margins: 60px all sides
